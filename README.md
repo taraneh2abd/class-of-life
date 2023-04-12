@@ -61,41 +61,68 @@ The KMP algorithm then performs a search from left to right in the text string w
 The KMP algorithm has a time complexity of O(n + m) where n is the length of the text and m is the length of the pattern. The space complexity of the algorithm is also O(m), where m is the length of the pattern.  
  
 ```
-def kmp(text, pattern):
-    n = len(text)
-    m = len(pattern)
-     # Preprocess the pattern to calculate lps
-    lps = [0] * m
-    j = 0
-    i = 1
-    while i < m:
-        if pattern[i] == pattern[j]:
-            j += 1
-            lps[i] = j
-            i += 1
-        else:
-            if j != 0:
-                j = lps[j-1]
-            else:
-                lps[i] = 0
-                i += 1
-     # Search for pattern in text using lps
-    i = 0
-    j = 0
-    indices = []
-    while i < n:
-        if text[i] == pattern[j]:
-            i += 1
-            j += 1
-        else:
-            if j != 0:
-                j = lps[j-1]
-            else:
-                i += 1
-        if j == m:
-            indices.append(i-j)
-            j = lps[j-1]
-     return indices
+vector<int> kmp_preprocess(string pattern)
+{
+    int m = pattern.length();
+    vector<int> lps(m);
+    int j = 0;
+
+    for (int i = 1; i < m;)
+    {
+        if (pattern[i] == pattern[j])
+        {
+            lps[i] = j + 1;
+            i++;
+            j++;
+        }
+        else
+        {
+            if (j != 0)
+            {
+                j = lps[j - 1];
+            }
+            else
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+    return lps;
+}
+
+vector<int> kmp_search(string text, string pattern)
+{
+    vector<int> lps = kmp_preprocess(pattern);
+    vector<int> indices;
+
+    int n = text.length();
+    int m = pattern.length();
+    int i = 0;
+    int j = 0;
+
+    while (i < n)
+    {
+        if (text[i] == pattern[j])
+        {
+            i++;
+            j++;
+        }
+        if (j == m)
+        {
+            indices.push_back(i - j);
+            j = lps[j - 1];
+        }
+        else if (i < n && text[i] != pattern[j])
+        {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
+    return indices;
+}
 ```
 
 <font color="blue"> longest common non-consecutive for definition of similarity:
