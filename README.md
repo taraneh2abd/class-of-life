@@ -61,7 +61,6 @@ The KMP algorithm then performs a search from left to right in the text string w
 The KMP algorithm has a time complexity of O(n + m) where n is the length of the text and m is the length of the pattern. The space complexity of the algorithm is also O(m), where m is the length of the pattern.  
  
 ```
-Sure! Here's an implementation of the KMP (Knuth-Morris-Pratt) algorithm in Python:
 def kmp(text, pattern):
     n = len(text)
     m = len(pattern)
