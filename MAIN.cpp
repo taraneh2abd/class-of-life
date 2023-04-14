@@ -1,7 +1,7 @@
 #include "GENOME.cpp"
 #include "CELL.cpp"
 #include "ANIMAL.cpp"
-// #include "virus.cpp"`
+#include "virus.cpp"
 
 
 void setCell(vector<Genome> &v,cell &c)
@@ -31,7 +31,7 @@ int main(){
     cell c, cA;
     animal a, aC;
     animal child_from_2,child_from_1;
-    // virus vir;
+    virus vir;
     str first, second, DNA[2];
     int command, number, adad;
     bool cellFirst=1, genFirst=1, animalFirst=1, virFirst=1;
@@ -153,7 +153,7 @@ int main(){
                         cout<<"they are from same specie\n";
                     }
                     else{
-                        cout<<"they are NOT from different specie\n";
+                        cout<<"they are from different specie\n";
                     }
                 break;
                 case 3:
@@ -166,12 +166,12 @@ int main(){
                     cout<<"child is : \n";
                     child_from_2.get_cell().print_cell();
                 break;
-                // case 5:\
-                //     cout<<"What is the RNA of virus?\n";
-                //     cin>>DNA[0];
-                //     vir.set_RNA(DNA[0]);
-                //     vir.is_virus_dangerous(a);
-                // break;
+                case 5:\
+                    cout<<"What is the RNA of virus?\n";
+                    cin>>DNA[0];
+                    vir.set_RNA(DNA[0]);
+                    vir.is_virus_dangerous(a);
+                break;
             }
             break;
             case 4:
@@ -180,3 +180,17 @@ int main(){
         }
     }
 }
+/*
+3
+2
+ATCGGC          
+TAGCCG
+GCTACA
+CGATGT
+2
+CATCGT
+GTAGCA
+CTGTTA
+GACAAT
+4
+*/
