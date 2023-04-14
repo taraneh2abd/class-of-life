@@ -1,88 +1,132 @@
-#include<iostream>
-#include<string>
-#include<vector>
-#include<map>
-#include "GENOME.h"
-#include "CELL.h"
 #include "ANIMAL.h"
-using namespace std;
-class virus:protected Genome{
-    protected:
-    string RNA;
-    public:
-        virus(){}
-        void set_RNA(string _RNA){
-            RNA=_RNA;
-        }
-        bool is_virus_dangerous(animal a){
-        map<string,int> Just4Sort;
-        vector<string> LS;
-        int n=(a.get_cell()).get_tedad_chromosomes(), value, quantity=0, check=0, j, t=0;
-        string chrome, sub, subha[50]={};
-        bool b=0;
-        for(int i=0; i<n; i++)
-        {
-            chrome=a.get_cell().get_chromosomes()[i].get_RNA();
-            chrome=chrome+to_string(i);
-            for(int j=chrome.length()-1; j>=0; j--)
-            {
-                sub=chrome[j]+sub;
-                Just4Sort.insert(pair<string,int>(sub, i));
+#include <time.h>
+#include <random>
+////////////////////////////////////////////////////////////////
+
+
+animal::animal(){}
+void animal::set_cell_animal(cell _cell_animal){
+    cell_animal=_cell_animal;
+}
+
+cell animal::get_cell(){
+    return cell_animal;
+}
+
+
+//matrix method for similarity of allels o(m*n):{longest common non-consecutive}
+double animal::similarity_percentage_2string(string X, string Y, int m, int n)
+{
+	// Initializing a matrix of size (m+1)*(n+1)
+	double L[m + 1][n + 1];
+
+	// Following steps build L[m+1][n+1] in bottom up
+	// fashion. Note that L[i][j] contains length of LCS of
+	// X[0..i-1] and Y[0..j-1]
+	for (int i = 0; i <= m; i++) {
+		for (int j = 0; j <= n; j++) {
+			if (i == 0 || j == 0)
+				L[i][j] = 0;
+
+			else if (X[i - 1] == Y[j - 1])
+				L[i][j] = L[i - 1][j - 1] + 1;
+
+			else
+				L[i][j] = max(L[i - 1][j], L[i][j - 1]);
+		}
+	}
+
+	// L[m][n] contains length of LCS for X[0..n-1]
+	// and Y[0..m-1]
+	return L[m][n]/max(m,n);
+}
+
+double animal::similarity_percentage(animal a2) {
+    vector<Genome>va1=cell_animal.get_chromosomes();
+    int tedad_a1=cell_animal.get_tedad_chromosomes();
+    vector<Genome>va2=a2.get_cell().get_chromosomes();
+    int tedad_a2=a2.get_cell().get_tedad_chromosomes();
+
+    str X=va1[0].get_RNA(),Y=va2[0].get_RNA(); 
+    int m=X.length(),n=Y.length();
+    double max_similarity=0;
+    fr(i,tedad_a1){
+        fr(j,tedad_a2){
+            int previouse_max_similarity=max_similarity;
+            str X=va1[i].get_RNA(),Y=va2[j].get_RNA(); int m=X.length(),n=Y.length();
+            max_similarity=max(max_similarity,similarity_percentage_2string(X,Y,m,n));
+            //A GLOBAL VALUEfor checking similarity of sexual_reproduction:
+            if(previouse_max_similarity!=max_similarity){
+                gen_max=va1[i];
             }
         }
-        for (auto pair : Just4Sort)
-        {
-            chrome={};
-            if(subha[pair.second].length()==0)
-                check++;
-            subha[pair.second]= pair.first;
-            if(check!=n) 
-                continue;
-            for(int i=0; i<subha[0].length();i++)
-            {   
-                for(j=0; j< n-1; j++)
-                {
-                    if(subha[j][i]!=subha[j+1][i])
-                    {
-                        b=1;
-                        break;
-                    }
-                }
-                if(i==subha[0].length()-1)
-                    i++;
-                if(b || i==subha[0].length())
-                {
-                    if(i-1>t)
-                    {
-                        t=i-1;
-                        LS.clear();
-                        LS.push_back(chrome);
-                        quantity=1;
-                    }
-                    else if(i-1==t)
-                    {
-                        LS.push_back(chrome);
-                        quantity++;
-                    }
-                    b=0;
-                    chrome={};
-                    break;
-                }
-                chrome=chrome+ subha[0][i];
-            }
-        }
-        cout<< "chromosomes have "<< quantity<< "common string(s)\n";
-        for (int q=0; q<quantity;q++)
-        {
-            cout<< q+1<<"= "<<LS[q]<<":\n";
-            size_t found = RNA.find(LS[q]);
-            if (found != string::npos){
-                cout<<"virus is dangerous!!"<<endl;
-                return true;
-            }
-        }
-        cout<<"virus is NOT dangerous!!"<<endl;
-        return false;
+    }   
+    return max_similarity; 
+}
+
+bool animal::operator==(animal other) {
+    if(cell_animal.get_tedad_chromosomes()==other.get_tedad_chromosomes() && similarity_percentage(other)>=0.7){
+        return true;
     }
-    friend class animal; 
-};
+    return false;
+}
+
+
+animal animal::reproduction(){
+    int n =cell_animal.get_tedad_chromosomes();
+    //cout<<"("<<n<<")";
+    vector<Genome>chromosomes=cell_animal.get_chromosomes();
+    //cout<<"0:"<<chromosomes[0].get_RNA()<<endl;
+    //cout<<"1:"<<chromosomes[1].get_DNA()<<endl;
+    int i=0; 
+    vector<Genome>rands;
+    fr(i,n){
+        rands.pb(chromosomes[i]);
+        rands.pb(chromosomes[i]);
+    }
+    random_shuffle(rands.begin(), rands.end());
+    animal ans;
+    vector<Genome>new_chromosomes;
+    fr(i,n){
+        new_chromosomes.pb(rands[i]);
+        // cout<<"rand:"<<new_chromosomes[i].get_RNA()<<endl;
+    }
+    cell c_child;
+    c_child.set_tedad_chromosomes(n);
+    c_child.set_chromosomes(new_chromosomes);
+    ans.set_cell_animal(c_child);
+    return ans;
+}
+
+animal animal::operator+(animal other) {
+    animal new_animal;
+    cell new_cell;
+    if((similarity_percentage(other)<0.4)||other.get_tedad_chromosomes()%2==1 || get_tedad_chromosomes()%2==1){
+        cout<<"this 2 animal cant reproduce!\n"; 
+        return new_animal;
+    }
+    vector<Genome> new_chromosomes;
+    new_chromosomes.pb(gen_max);
+    animal production1=reproduction();
+    animal production2=other.reproduction();
+    int n=get_cell().get_tedad_chromosomes();
+    srand(time(NULL));
+    for(int i=0; i<n/2-1; i++){
+        int r=rand()%n;
+        new_chromosomes.pb(get_cell().get_chromosomes()[r]);
+        r=rand()%n;
+    }
+    fr(i,n/2){
+        int r=rand()%n;
+        new_chromosomes.pb(other.get_cell().get_chromosomes()[r]);
+    }
+    new_cell.set_tedad_chromosomes(n);
+    new_cell.set_chromosomes(new_chromosomes);
+    new_animal.set_cell_animal(new_cell);
+
+    return new_animal;
+}
+
+void animal::cell_death(){
+    bool is_alive=cell_animal.check_is_alive();
+}
