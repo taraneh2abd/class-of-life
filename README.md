@@ -7,7 +7,7 @@ it has 4 classes wich use inheritance:
 - `ANIMAL` 
 - `VIRUS`
 
-MIDTER PROJECT ALGORITHMS
+PROJECT ALGORITHMS
 ========
 
 <font color="blue">MANACHER for finding all pallindroms:
