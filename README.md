@@ -1,11 +1,14 @@
-MIDTERM PROJECT ALGORITHMS
+SUMMERY
 ========
 
-it has 4 class:
+it has 4 classes wich use inheritance:
 - `GENOME`
 - `CELL`
 - `ANIMAL` 
 - `VIRUS`
+
+MIDTER PROJECT ALGORITHMS
+========
 
 <font color="blue">MANACHER for finding all pallindroms:
 
